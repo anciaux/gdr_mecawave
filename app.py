@@ -4,16 +4,15 @@ import streamlit as st
 ################################################################
 
 
-sub_apps = [e for e in os.listdir() if os.path.isdir(e) and e[0] != '.']
+sub_apps = ['stress_intensity_factor',
+            'plate_hole']
 
 tabs = st.tabs(sub_apps)
-_dir = os.getcwd()
 
 for name, tab in zip(sub_apps, tabs):
     with tab:
         try:
             import importlib
-            import os
             sys.path.append(name)
             spec = importlib.util.spec_from_file_location(
                 name, os.path.join(name, name+'.py'))

@@ -49,15 +49,16 @@ params = {
     'h2': .5,
     'U': .1,
 }
-st.write('toto')
-st.write(os.getcwd())
-f = sp.load_file(os.path.join(dirname, 'schematic.svg'))
+col1, col2 = st.columns(2)
 
-f.view()
+with col1:
+    f = sp.load_file(os.path.join(dirname, 'schematic.svg'))
+    f.view()
+
 
 for p, value in params.items():
     _type = type(value)
-    val = st.text_input(p, value=value)
+    val = col2.text_input(p, value=value)
     params[p] = _type(val)
 
 button = st.button('Compute!')
