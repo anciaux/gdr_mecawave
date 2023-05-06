@@ -1,0 +1,9 @@
+- '*~'
+- .git
+- .gitattributes
+- .gitignore
+- .ipynb_checkpoints
+- __pycache__
+- .renku
+- .streamlit
+- .solidipes
