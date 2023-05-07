@@ -21,3 +21,4 @@ for name, tab in zip(sub_apps, tabs):
             spec.loader.exec_module(foo)
         except Exception as err:
             st.error(err)
+            raise err
