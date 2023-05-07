@@ -2,7 +2,6 @@ import akantu as aka
 import numpy as np
 import time
 import generate_model
-import post_process
 import plot
 from app_helper import tqdm, make_figure
 import os
@@ -11,7 +10,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import streamlit as st
 # Input model for src_akantu
-
+################################################################
 params = {
     'uniform_mesh': True,
     # Material
@@ -27,7 +26,7 @@ params.update({
     'x0': -0.5 * params['bar_length'],
     # Rigth extremitiy x coordinate / f-final
     'xf':  0.5 * params['bar_length'],
-    'number_elements':  500 * 2,  # Total number of triangular elements
+    'number_elements':  50 * 2,  # Total number of triangular elements
     'area':  1.0,  # Cross sectional area (m2) (Equal to element size )
     # Load
     'strain_rate':  1e4,  # (s-1)
@@ -105,7 +104,7 @@ def runSimulation(model, **params):
         work_previous_step = energies["external work"]
         results_energies.append([n*dt] + [v for k, v in energies.items()])
         headers_energies = ['time'] + [k for k, v in energies.items()]
-        d = post_process.getDamageParameter(model)
+        d = getDamageParameter(model)
 
         # Fragmentation data
         fragment_data = aka.FragmentManager(model)
@@ -273,22 +272,20 @@ def plotVarEnergiesCZM(var_energies, title):
 
 
 def plotFragmentSizeHistogram(fragment_sizes, bins=10, **kwargs):
-    fig, axes = plt.subplots()
-    axes.grid(True, which="both")
-    axes.axhline(y=0, color="k")
-    plt.title("Fragment size distribution")
-    plt.xlabel("Fragment size (mm)")
-    plt.ylabel("Number of fragments")
+    with make_figure() as (fig, axe):
+        axe.grid(True, which="both")
+        axe.axhline(y=0, color="k")
+        axe.set_title("Fragment size distribution")
 
-    counts, bins = np.histogram(fragment_sizes, bins=bins)
-    bin_centers = 0.5*(bins[:-1] + bins[1:])
-    non_zero = counts > 0
-    counts = counts[non_zero]
-    bins = bin_centers[non_zero]
-    plt.plot(bins, counts, 'o-')
-    plt.xlabel('Fragment size s/L')
-    plt.ylabel('Occurence')
-    plt.xlim(xmin=0, xmax=bins.max())
+        counts, bins = np.histogram(fragment_sizes, bins=bins)
+        bin_centers = 0.5*(bins[:-1] + bins[1:])
+        non_zero = counts > 0
+        counts = counts[non_zero]
+        bins = bin_centers[non_zero]
+        axe.plot(bins, counts, 'o-')
+        axe.set_xlabel('Fragment size s/L')
+        axe.set_ylabel("Number of fragments")
+        axe.set_xlim(xmin=0, xmax=bins.max())
 
 ################################################################
 
@@ -321,6 +318,21 @@ def analyze_results(model, results, energies, **params):
 
     frag_lengths = results['frag_lengths'].iloc[-1]
     plotFragmentSizeHistogram(frag_lengths, **params)
+
+################################################################
+
+
+def getDamageParameter(model):
+
+    d = model.getMaterial(1).getInternalReal("damage")
+    d = d(aka._cohesive_2d_4)
+    # mat = model.getMaterial(1)
+    # coh_id = model.getMaterial("insertion").getElementFilter()(
+    #  aka._cohesive_2d_4
+    # )
+    # model.getFEEngine().computeIntegrationPointsCoordinate(quad_coords,
+    # model.getMaterial("cohesive material").getElementFilter())
+    return d
 
 ################################################################
 
