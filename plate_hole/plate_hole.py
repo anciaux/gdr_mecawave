@@ -138,7 +138,8 @@ def create_model(**params):
     return model, mesh
 
 
-button = st.button('Compute!', key='button'+dirname)
+button = st.button('Compute!', key='button'+dirname,
+                   use_container_width=True, type='primary')
 
 if button:
     model, mesh = create_model(**params)
@@ -148,6 +149,7 @@ if button:
     triangles = tri.Triangulation(nodes[:, 0], nodes[:, 1], conn)
     u = model.getDisplacement()
     stress_field = model.getMaterial(0).getStress(aka._triangle_3)
+    s_norm = np.linalg.norm(stress_field, axis=1)
 
     # plot the result
     with make_figure() as (fig, axe):
@@ -156,9 +158,10 @@ if button:
 
     with make_figure() as (fig, axe):
         t = axe.triplot(triangles, '--', lw=.8)
+        factor = st.number_input("Displacement magnifying factor", value=1e9)
         t = axe.triplot(
-            nodes[:, 0]+u[:, 0],
-            nodes[:, 1] + u[:, 1], triangles=conn)
+            nodes[:, 0]+u[:, 0]*factor,
+            nodes[:, 1] + u[:, 1]*factor, triangles=conn)
 
     with make_figure() as (fig, axe):
 
@@ -170,7 +173,8 @@ if button:
         cbar.set_label('displacement magnitude [m]')
 
     with make_figure() as (fig, axe):
-        stress_disp = axe.tripcolor(
-            triangles, np.linalg.norm(stress_field, axis=1))
+        stress_disp = axe.tripcolor(triangles, s_norm)
         cbar = fig.colorbar(stress_disp, location='top')
         cbar.set_label('stress magnitude [Pa]')
+
+    st.markdown(r'### Max stress $|\sigma| = ' + f'{s_norm.max()}$')

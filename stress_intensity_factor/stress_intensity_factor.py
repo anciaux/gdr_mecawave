@@ -61,7 +61,7 @@ for p, value in params.items():
     val = col2.text_input(p, value=value)
     params[p] = _type(val)
 
-button = st.button('Compute!')
+button = st.button('Compute!', use_container_width=True, type='primary')
 
 if button:
     with st.spinner("Creating model and solving"):
