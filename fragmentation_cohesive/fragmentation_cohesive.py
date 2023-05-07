@@ -23,27 +23,10 @@ params = {
     'strain_rate':  10.0**4,  # (s-1)
     # Time
     'time_simulation':  5 * 10**-7,  # Total time of simulation (s)
-
-    # if there is previous data to continue the simulation
-    # from a previous simulation set
-    # continue_simulation_from_step = True and give the time
-    # to start the simulation
-    'initial_step':  0,
-    'continue_simulation_from_step':  False,
-
     'dump_freq': 1,
-    'paraview': False,
     'variation_sigma_c': 1e6,  # random(uniform) variation of sigma_c
     'contact': 0
 }
-
-params.update({
-    # Left extremitiy x coordinate / 0-initial
-    'x0': -0.5 * params['bar_length'],
-    # Rigth extremitiy x coordinate / f-final
-    'xf':  0.5 * params['bar_length'],
-})
-
 
 dirname = os.path.dirname(__file__)
 
@@ -60,6 +43,16 @@ with col2:
 
 button = st.button('Compute!', key='button'+dirname,
                    use_container_width=True, type='primary')
+
+
+params.update({
+    # Left extremitiy x coordinate / 0-initial
+    'x0': -0.5 * params['bar_length'],
+    # Rigth extremitiy x coordinate / f-final
+    'xf':  0.5 * params['bar_length'],
+    'paraview': False,
+})
+
 
 if button:
     model, mesh = main.generate_model.create_model(**params)

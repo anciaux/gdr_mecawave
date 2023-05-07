@@ -11,43 +11,6 @@ import matplotlib.pyplot as plt
 import streamlit as st
 # Input model for src_akantu
 ################################################################
-params = {
-    'uniform_mesh': True,
-    # Material
-    'young_modulus':  275.0 * 1e9,  # (Pa)
-    'density':  2750.0,  # (kg/m3)
-    'fracture_energy':  100.0,  # (N/m)
-    'stress_limit':  300.0 * 1e6,  # (Pa)
-    # Geometry
-    'bar_length':  50 * 1e-3,  # (m)
-}
-params.update({
-    # Left extremitiy x coordinate / 0-initial
-    'x0': -0.5 * params['bar_length'],
-    # Rigth extremitiy x coordinate / f-final
-    'xf':  0.5 * params['bar_length'],
-    'number_elements':  50 * 2,  # Total number of triangular elements
-    'area':  1.0,  # Cross sectional area (m2) (Equal to element size )
-    # Load
-    'strain_rate':  1e4,  # (s-1)
-    # Time
-    'time_simulation':  4.0 * 1e-7,  # Total time of simulation (s)
-
-    # if there is previous data to continue the simulation
-    # from a previous simulation set
-    # continue_simulation_from_step = True and give the time
-    # to start the simulation
-    'initial_step':  0,
-    'continue_simulation_from_step':  False,
-
-    'half_bar':  False,
-    # if use symmetry we have to add the bc proper
-    'dump_freq': 10,
-    'paraview': False
-})
-
-
-################################################################
 
 
 def runSimulation(model, **params):
