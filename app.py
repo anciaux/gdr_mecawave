@@ -7,7 +7,9 @@ plt.rcParams['figure.figsize'] = [10, 10]
 
 
 sub_apps = ['plate_hole',
-            'stress_intensity_factor']
+            'stress_intensity_factor',
+            'fragmentation_cohesive'
+            ]
 
 tabs = st.tabs(sub_apps)
 
