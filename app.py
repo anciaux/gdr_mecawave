@@ -1,7 +1,9 @@
 import os
 import sys
 import streamlit as st
+import matplotlib.pyplot as plt
 ################################################################
+plt.rcParams['figure.figsize'] = [10, 10]
 
 
 sub_apps = ['stress_intensity_factor',

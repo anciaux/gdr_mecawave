@@ -3,31 +3,16 @@
 ################################################################
 import subprocess
 import matplotlib.tri as tri
-import matplotlib.pyplot as plt
 import numpy as np
 import akantu as aka
 import solidipes as sp
 import os
 import streamlit as st
 import argparse
-from contextlib import contextmanager
-plt.rcParams['figure.figsize'] = [10, 10]
+from app_helper import params_selector, make_figure
 ################################################################
 
 
-@contextmanager
-def make_figure():
-
-    fig = plt.figure()
-    axe = fig.add_subplot(111)
-    axe.set_aspect('equal')
-    try:
-        yield fig, axe
-    finally:
-        st.pyplot(fig)
-
-
-################################################################
 dirname = os.path.dirname(__file__)
 
 params = {
@@ -35,7 +20,8 @@ params = {
     'l': 5.,            # length (y-axis)
     'h1': 0.01,         # characteristic mesh size at the hole
     'h2': 0.3,          # characteristic mesh size in corners
-    'R': 2.,            # radius of the hole
+    'a': 1,            # radius of the hole
+    'b': 1.,            # radius of the hole
     'traction': 10,     # radius of the hole
     'rho': 7800,
     'E': 2.1e11,
@@ -48,10 +34,8 @@ with col1:
     f = sp.load_file(os.path.join(dirname, 'plate-hole-2.svg'))
     f.view()
 
-for p, value in params.items():
-    _type = type(value)
-    val = col2.text_input(p, value=value, key=p+dirname)
-    params[p] = _type(val)
+with col2:
+    params_selector(params, dirname)
 
 
 def create_model(**params):
@@ -72,15 +56,15 @@ def create_model(**params):
     # geometric parameters
     mesh_file = f"""
     Point(1) = {{0, 0, 0, {inp.h2} }};
-    Point(2) = {{ {inp.R}, 0, 0, {inp.h1} }};
+    Point(2) = {{ {inp.a}, 0, 0, {inp.h1} }};
     Point(3) = {{ {inp.w}, 0, 0, {inp.h2} }};
     Point(4) = {{ {inp.w}, {inp.l}, 0, {inp.h2} }};
     Point(5) = {{ 0,   {inp.l}, 0, {inp.h2} }};
-    Point(6) = {{0,    {inp.R}, 0, {inp.h1} }};
+    Point(6) = {{0,    {inp.b}, 0, {inp.h1} }};
     """
 
     mesh_file += """
-    Circle(1) = {6, 1, 2};
+    Ellipse(1) = {6, 1, 6, 2};
     Line(2) = {2, 3};
     Line(3) = {3, 4};
     Line(4) = {4, 5};
@@ -152,18 +136,18 @@ if button:
     s_norm = np.linalg.norm(stress_field, axis=1)
 
     # plot the result
-    with make_figure() as (fig, axe):
+    with make_figure(equal_ratio=True) as (fig, axe):
         # plots the pristine state
         t = axe.triplot(triangles, '--', lw=.8)
 
-    with make_figure() as (fig, axe):
+    with make_figure(equal_ratio=True) as (fig, axe):
         t = axe.triplot(triangles, '--', lw=.8)
         factor = st.number_input("Displacement magnifying factor", value=1e9)
         t = axe.triplot(
             nodes[:, 0]+u[:, 0]*factor,
             nodes[:, 1] + u[:, 1]*factor, triangles=conn)
 
-    with make_figure() as (fig, axe):
+    with make_figure(equal_ratio=True) as (fig, axe):
 
         # plot displacement field
         u_disp = axe.tricontourf(triangles, np.linalg.norm(u, axis=1))
@@ -172,7 +156,7 @@ if button:
         cbar = fig.colorbar(u_disp, location='top')
         cbar.set_label('displacement magnitude [m]')
 
-    with make_figure() as (fig, axe):
+    with make_figure(equal_ratio=True) as (fig, axe):
         stress_disp = axe.tripcolor(triangles, s_norm)
         cbar = fig.colorbar(stress_disp, location='top')
         cbar.set_label('stress magnitude [Pa]')
