@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 plt.rcParams['figure.figsize'] = [10, 10]
 
 
-sub_apps = ['stress_intensity_factor',
-            'plate_hole']
+sub_apps = ['plate_hole',
+            'stress_intensity_factor']
 
 tabs = st.tabs(sub_apps)
 

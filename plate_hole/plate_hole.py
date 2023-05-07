@@ -9,7 +9,7 @@ import solidipes as sp
 import os
 import streamlit as st
 import argparse
-from app_helper import params_selector, make_figure
+from app_helper import params_selector, make_figure, tqdm
 ################################################################
 
 
@@ -20,7 +20,7 @@ params = {
     'l': 5.,            # length (y-axis)
     'h1': 0.01,         # characteristic mesh size at the hole
     'h2': 0.3,          # characteristic mesh size in corners
-    'a': 1,            # radius of the hole
+    'a': 1.,            # radius of the hole
     'b': 1.,            # radius of the hole
     'traction': 10,     # radius of the hole
     'rho': 7800,
@@ -36,6 +36,7 @@ with col1:
 
 with col2:
     params_selector(params, dirname)
+    compute_variations = st.checkbox('Compute stress variations!')
 
 
 def create_model(**params):
@@ -125,7 +126,8 @@ def create_model(**params):
 button = st.button('Compute!', key='button'+dirname,
                    use_container_width=True, type='primary')
 
-if button:
+
+def stress_view(**params):
     model, mesh = create_model(**params)
     # extract the mesh
     conn = mesh.getConnectivity(aka._triangle_3)
@@ -162,3 +164,26 @@ if button:
         cbar.set_label('stress magnitude [Pa]')
 
     st.markdown(r'### Max stress $|\sigma| = ' + f'{s_norm.max()}$')
+
+
+def variations_view(**params):
+    p = params.copy()
+    res = []
+    for a in tqdm([1., 0.1, 0.01, 0.001, 0.0001, 0.00001], init_text="Varying a"):
+        p['a'] = a
+        model, mesh = create_model(**p)
+        stress_field = model.getMaterial(0).getStress(aka._triangle_3)
+        s_norm = np.linalg.norm(stress_field, axis=1)
+        res.append((a, s_norm.max()))
+    res = np.array(res)
+    with make_figure() as (fig, axe):
+        axe.plot(res[:, 0], res[:, 1], 'o-')
+        axe.set_xlabel('a [m]')
+        axe.set_ylabel(r'$\max |\sigma| [Pa]$')
+
+
+if button:
+    if compute_variations is False:
+        stress_view(**params)
+    else:
+        variations_view(**params)

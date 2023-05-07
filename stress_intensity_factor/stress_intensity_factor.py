@@ -31,16 +31,23 @@ with col2:
     params_selector(params, dirname)
 
     compute_variations = st.checkbox('Compute K variations!')
-    zoom_factor = st.number_input('Zoom factor', value=1)
+    if compute_variations is False:
+        zoom_factor = st.number_input('Zoom factor', value=1)
+        zoom_range = params['L']/zoom_factor
 
-zoom_range = params['L']/zoom_factor
 crack_length = params['crack_length']
 
 button = st.button('Compute!', use_container_width=True, type='primary')
 
 
 def on_click(**params):
+    if compute_variations:
+        variations_view(**params)
+    else:
+        fields_view(**params)
 
+
+def fields_view(**params):
     with st.spinner("Creating model and solving"):
         model, mesh = tuto.createModel(**params)
         fig = tuto.plotMesh(mesh, displacement=model.getDisplacement())
@@ -102,8 +109,8 @@ def on_click(**params):
             axe.set_ylabel(r'$\sigma_{\theta\theta}\quad[Pa]$')
             axe.legend(loc='best')
 
-    if not compute_variations:
-        return
+
+def variations_view(**params):
     with st.spinner("Creating model and solving"):
         model, mesh = tuto.createModel(**params)
 
