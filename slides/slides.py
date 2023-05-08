@@ -11,6 +11,8 @@ lectures = ["0_Introduction_class",
             "6_Course_HPC_Fragmentation"]
 
 for f in lectures:
-    fname = f'slides/{f}/{f}.html'
-    content = open(fname, 'r').read()
-    st.markdown(content, unsafe_allow_html=True)
+    fname = f'slides/{f}.pdf'
+    st.download_button(f'Download {f}', open(fname, 'rb').read(),
+                       file_name=os.path.basename(fname),
+                       use_container_width=True,
+                       type='primary')
