@@ -15,7 +15,7 @@ dirname = os.path.dirname(__file__)
 
 params = {
     'L': 10,
-    'crack_length': 10,
+    'l': 10,
     'h1': .05,
     'h2': .5,
     'U': .1,
@@ -23,7 +23,7 @@ params = {
 col1, col2 = st.columns(2)
 
 with col1:
-    f = sp.load_file(os.path.join(dirname, 'schematic.svg'))
+    f = sp.load_file(os.path.join(dirname, 'schematic.png'))
     f.view()
 
 
@@ -35,7 +35,7 @@ with col2:
         zoom_factor = st.number_input('Zoom factor', value=1)
         zoom_range = params['L']/zoom_factor
 
-crack_length = params['crack_length']
+crack_length = params['l']
 
 button = st.button('Compute!', use_container_width=True, type='primary')
 
@@ -119,7 +119,7 @@ def variations_view(**params):
     for l in tqdm(np.arange(1, 10), init_text="Varying crack length"):
         params = {
             'L': 10,
-            'crack_length': l,
+            'l': l,
             'h1': .0005,
             'h2': .2,
             'U': .1,
@@ -141,7 +141,7 @@ def variations_view(**params):
                    init_text="Varying refinement"):
         params = {
             'L': 10,
-            'crack_length': 10,
+            'l': 10,
             'h1': h1,
             'h2': .2,
             'U': .1,

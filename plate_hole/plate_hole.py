@@ -22,7 +22,7 @@ params = {
     'h2': 0.3,          # characteristic mesh size in corners
     'a': 1.,            # radius of the hole
     'b': 1.,            # radius of the hole
-    'traction': 10,     # radius of the hole
+    'F': 10,            # radius of the hole
     'rho': 7800,
     'E': 2.1e11,
     'nu': 0.3
@@ -31,7 +31,7 @@ params = {
 col1, col2 = st.columns(2)
 
 with col1:
-    f = sp.load_file(os.path.join(dirname, 'plate-hole-2.svg'))
+    f = sp.load_file(os.path.join(dirname, 'plate-hole-2.png'))
     f.view()
 
 with col2:
@@ -57,11 +57,11 @@ def create_model(**params):
     # geometric parameters
     mesh_file = f"""
     Point(1) = {{0, 0, 0, {inp.h2} }};
-    Point(2) = {{ {inp.a}, 0, 0, {inp.h1} }};
+    Point(2) = {{ {inp.b}, 0, 0, {inp.h1} }};
     Point(3) = {{ {inp.w}, 0, 0, {inp.h2} }};
     Point(4) = {{ {inp.w}, {inp.l}, 0, {inp.h2} }};
     Point(5) = {{ 0,   {inp.l}, 0, {inp.h2} }};
-    Point(6) = {{0,    {inp.b}, 0, {inp.h1} }};
+    Point(6) = {{0,    {inp.a}, 0, {inp.h1} }};
     """
 
     mesh_file += """
@@ -107,7 +107,7 @@ def create_model(**params):
     # set the force/Neumann boundary conditions
     model.getExternalForce()[:] = 0
 
-    trac = [inp.traction, 0]  # Newtons/m^2
+    trac = [inp.F, 0]  # Newtons/m^2
 
     model.applyBC(aka.FromTraction(trac), "Traction")
 
