@@ -6,7 +6,8 @@ import matplotlib.pyplot as plt
 plt.rcParams['figure.figsize'] = [10, 10]
 
 
-sub_apps = ['plate_hole',
+sub_apps = ['slides',
+            'plate_hole',
             'stress_intensity_factor',
             'fragmentation_cohesive'
             ]
