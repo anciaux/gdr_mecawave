@@ -11,13 +11,13 @@ from scipy.optimize import curve_fit
 plt.rcParams['figure.figsize'] = [5, 5]
 
 
-def createMesh(crack_length=1, L=10, h1=0.05, h2=.5, quiet=False):
+def createMesh(l=1, L=10, h1=0.05, h2=.5, quiet=False):
 
     geometry_file = f"""
 h1 = {h1};
 h2 = {h2};
 L = {L};
-l = {crack_length};
+l = {l};
 Point(1) = {{0, 0, 0, h2}};
 Point(2) = {{2*L, 0, 0, h2}};
 Point(3) = {{2*L, L, 0, h2}};
@@ -74,9 +74,9 @@ Physical Line("right") = {{4,9}};
 ################################################################
 
 
-def createModel(crack_length=1, L=10, h1=0.05, h2=.5, U=0.005, **kwargs):
+def createModel(l=1, L=10, h1=0.05, h2=.5, U=0.005, **kwargs):
 
-    mesh = createMesh(crack_length=crack_length, L=L, h1=h1, h2=h2, **kwargs)
+    mesh = createMesh(l=l, L=L, h1=h1, h2=h2, **kwargs)
 
     material_file = """
 material elastic [
@@ -194,7 +194,7 @@ def plotResult(model, displacement=None, field=None,
 
 
 def extract_stress(model, theta=0, r_fit=1, angle_threshold=1e-1,
-                   crack_length=None, shear=False, **params):
+                   l=None, shear=False, **params):
     mesh = model.getMesh()
     quad_coords = aka.ElementTypeMapArrayReal()
     quad_coords.initialize(mesh, nb_component=2)
@@ -204,7 +204,7 @@ def extract_stress(model, theta=0, r_fit=1, angle_threshold=1e-1,
         mesh.getNodes(), quad_coords)
 
     q_points = quad_coords(aka._triangle_3)
-    tip = np.array((crack_length, 0))
+    tip = np.array((l, 0))
     curve = []
     stress_field = model.getMaterial(0).getStress(aka._triangle_3)
 
@@ -242,4 +242,5 @@ def full_study_extract_K(**params):
     model, mesh = createModel(**params)
     plotMesh(mesh, displacement=model.getDisplacement())
     curve, K = extract_stress(model, theta=0, r_fit=.2, shear=True, **params)
-    return K
+    epot = model.getEnergy('potential')
+    return K, epot

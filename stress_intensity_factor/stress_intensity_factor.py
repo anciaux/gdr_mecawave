@@ -115,6 +115,7 @@ def variations_view(**params):
         model, mesh = tuto.createModel(**params)
 
     res = []
+    res_epot = []
 
     for l in tqdm(np.arange(1, 10), init_text="Varying crack length"):
         params = {
@@ -124,8 +125,10 @@ def variations_view(**params):
             'h2': .2,
             'U': .1,
         }
-        K = tuto.full_study_extract_K(quiet=True, **params)
+        K, epot = tuto.full_study_extract_K(quiet=True, **params)
+
         res.append((l, K))
+        res_epot.append((l, epot))
 
     res = np.array(res)
     with make_figure() as (fig, axe):
@@ -133,9 +136,16 @@ def variations_view(**params):
         axe.set_xlabel('Crack length [m]')
         _ = axe.set_ylabel('$K^I$')
 
+    res_epot = np.array(res_epot)
+    with make_figure() as (fig, axe):
+        axe.plot(res_epot[:, 0], res_epot[:, 1], 'o-')
+        axe.set_xlabel('Crack length [m]')
+        _ = axe.set_ylabel('$E^{pot}$')
+
     ################################################################
 
     res = []
+    res_epot = []
 
     for h1 in tqdm([.05, .01, .005, .001, .0005],
                    init_text="Varying refinement"):
@@ -146,14 +156,21 @@ def variations_view(**params):
             'h2': .2,
             'U': .1,
         }
-        K = tuto.full_study_extract_K(quiet=True, **params)
+        K, epot = tuto.full_study_extract_K(quiet=True, **params)
         res.append((h1, K))
+        res_epot.append((h1, epot))
 
     res = np.array(res)
     with make_figure() as (fig, axe):
         axe.plot(res[:, 0], res[:, 1], 'o-')
         axe.set_xlabel('Mesh characteristic size [m]')
         _ = axe.set_ylabel('$K^I$')
+
+    res_epot = np.array(res)
+    with make_figure() as (fig, axe):
+        axe.plot(res_epot[:, 0], res_epot[:, 1], 'o-')
+        axe.set_xlabel('Mesh characteristic size [m]')
+        _ = axe.set_ylabel('$E^{pot}$')
 
 
 ################################################################
