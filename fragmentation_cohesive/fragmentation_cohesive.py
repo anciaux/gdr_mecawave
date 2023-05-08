@@ -34,8 +34,8 @@ dirname = os.path.dirname(__file__)
 col1, col2 = st.columns(2)
 
 with col1:
-    # f = sp.load_file(os.path.join(dirname, 'plate-hole-2.svg'))
-    # f.view()
+    f = sp.load_file(os.path.join(dirname, 'schematic.png'))
+    f.view()
     pass
 
 with col2:
