@@ -14,5 +14,4 @@ for f in lectures:
     fname = f'slides/{f}.pdf'
     st.download_button(f'Download {f}', open(fname, 'rb').read(),
                        file_name=os.path.basename(fname),
-                       use_container_width=True,
-                       type='primary')
+                       use_container_width=True)
