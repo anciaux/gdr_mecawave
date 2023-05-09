@@ -169,12 +169,12 @@ def stress_view(**params):
 def variations_view(**params):
     p = params.copy()
     res = []
-    for b in tqdm([1., 0.1, 0.01, 0.001, 0.0001, 0.00001], init_text="Varying a"):
+    for b in tqdm([1., 0.1, 0.01, 0.001, 0.0001, 0.00001], init_text="Varying b"):
         p['b'] = b
         model, mesh = create_model(**p)
         stress_field = model.getMaterial(0).getStress(aka._triangle_3)
         s_norm = np.linalg.norm(stress_field, axis=1)
-        res.append((a, s_norm.max()))
+        res.append((b, s_norm.max()))
     res = np.array(res)
     with make_figure() as (fig, axe):
         axe.plot(res[:, 0], res[:, 1], 'o-')
