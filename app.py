@@ -6,11 +6,11 @@ import matplotlib.pyplot as plt
 plt.rcParams['figure.figsize'] = [10, 10]
 
 
-sub_apps = ['slides',
-            'plate_hole',
-            'stress_intensity_factor',
-            'fragmentation_cohesive'
-            ]
+sub_apps = [  # 'slides',
+    'plate_hole',
+    'stress_intensity_factor',
+    'fragmentation_cohesive'
+]
 
 tabs = st.tabs(sub_apps)
 
