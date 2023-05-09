@@ -170,7 +170,7 @@ def variations_view(**params):
     p = params.copy()
     res = []
     for a in tqdm([1., 0.1, 0.01, 0.001, 0.0001, 0.00001], init_text="Varying a"):
-        p['a'] = a
+        p['b'] = b
         model, mesh = create_model(**p)
         stress_field = model.getMaterial(0).getStress(aka._triangle_3)
         s_norm = np.linalg.norm(stress_field, axis=1)
