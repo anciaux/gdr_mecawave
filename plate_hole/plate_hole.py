@@ -178,7 +178,7 @@ def variations_view(**params):
     res = np.array(res)
     with make_figure() as (fig, axe):
         axe.plot(res[:, 0], res[:, 1], 'o-')
-        axe.set_xlabel('a [m]')
+        axe.set_xlabel('b [m]')
         axe.set_ylabel(r'$\max |\sigma| [Pa]$')
 
 
