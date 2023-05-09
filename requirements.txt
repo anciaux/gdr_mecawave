@@ -8,4 +8,4 @@ gmsh
 itkwidgets
 pyvista
 git+https://gitlab.com/ganciaux/slides.git
-git+https://gitlab.com/dcsm/solidipes.git@dev
+git+https://gitlab.com/dcsm/solidipes.git
