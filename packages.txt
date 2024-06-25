@@ -8,3 +8,4 @@ ffmpeg
 liblapack-dev
 libmagickwand-dev
 gmsh
+libpq-dev
